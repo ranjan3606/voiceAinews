@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from 'react';
+import alanBtn from '@alan-ai/alan-sdk-web'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+import NewsCard from './components/newscard/NewsCard'
+import useStyles from './styles.js'
+
+
+
+const alanKey = 'dc93801ca30f38512b4fd359e3e98fc22e956eca572e1d8b807a3e2338fdd0dc/stage'
+
+const App = () => {
+  const [newsArticles, setnewsArticles] = useState([])
+  const [activeArticle, setActiveArticle] = useState(-1);
+  const classes = useStyles()
+
+  useEffect(() => {
+    alanBtn({
+      key: alanKey, 
+      onCommand: ({command, articles}) => {
+        if(command === 'newsHeadlines'){
+          setnewsArticles(articles)
+        }else if(command === 'highlight'){
+          setActiveArticle((prevActiveArticle) => prevActiveArticle + 1)
+        }
+      }
+    })
+  }, [])
+
+
+
+
+
+  return(
+    <div>
+      <div className={classes.logoContainer}>
+        <img src="https://i.pinimg.com/originals/6e/5a/e5/6e5ae5a153d13b789b170c0edf9fc1d8.png" className={classes.logo} alt="logo" />
+      </div>
+      <NewsCard articles={newsArticles} activeArticle={activeArticle} />
     </div>
-  );
+  )
 }
 
 export default App;
+
